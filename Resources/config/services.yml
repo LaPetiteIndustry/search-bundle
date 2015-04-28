@@ -1,0 +1,4 @@
+services:
+#    lpi_lucene.example:
+#        class: Lpi\Bundle\LuceneBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

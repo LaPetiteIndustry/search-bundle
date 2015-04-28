@@ -6,7 +6,7 @@
  * Time: 19:14
  */
 
-namespace Lpi\Bundle\LuceneBundle\Command;
+namespace Lpi\Bundle\SearchBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\SecurityBundle\Tests\Functional\WebTestCase;

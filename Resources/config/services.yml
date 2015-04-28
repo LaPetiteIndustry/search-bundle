@@ -1,9 +1,9 @@
 services:
     lpi_lucene.search:
-        class: Lpi\Bundle\LuceneBundle\Service\SearchService
+        class: Lpi\Bundle\SearchBundle\Service\SearchService
         arguments: [@ivory_lucene_search]
     lpi_lucene.index_command:
-        class: Lpi\Bundle\LuceneBundle\Command\IndexationCommand
+        class: Lpi\Bundle\SearchBundle\Command\IndexationCommand
         arguments:
             - "sample-sitemap.xml"
         tags:

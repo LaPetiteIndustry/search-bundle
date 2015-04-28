@@ -6,9 +6,9 @@
  * Time: 11:37
  */
 
-namespace Lpi\Bundle\LuceneBundle\Service;
+namespace Lpi\Bundle\SearchBundle\Service;
 
-use Ivory\LuceneSearchBundle\Model\LuceneManager;
+use Ivory\SearchBundle\Model\LuceneManager;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class SearchService {

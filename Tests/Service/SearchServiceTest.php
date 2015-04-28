@@ -6,7 +6,7 @@
  * Time: 11:45
  */
 
-namespace Lpi\Bundle\LuceneBundle\Test\Service;
+namespace Lpi\Bundle\SearchBundle\Test\Service;
 
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

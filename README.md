@@ -1,10 +1,10 @@
-# lucene-bundle
+# search-bundle
 
 ## Installation
 1. in AppKernel
 <pre>
     new Ivory\LuceneSearchBundle\IvoryLuceneSearchBundle(),
-    new Lpi\Bundle\LuceneBundle\LpiLuceneBundle(),
+    new Lpi\Bundle\SearchBundle\LpiSearchBundle(),
 </pre>
 
 ## Configuration

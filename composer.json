@@ -1,19 +1,19 @@
 {
-    "name" : "lpi/lucene-bundle",
+    "name" : "lpi/search-bundle",
     "description" : "A bundle that use the lucene search engine",
     "type" : "symfony-bundle",
     "authors" : [{
         "name" : "LPI - Jeremy",
         "email" : "jeremy@lapetiteindustry.com"
     }],
-    "keywords" : ["zend lucene search"],
+    "keywords" : ["lpi zend lucene search"],
     "license" : [
         "Apache"
     ],
     "repositories" : [
         {
             "type": "git",
-            "url":  "git@github.com:LaPetiteIndustry/lucene-bundle.git"
+            "url":  "git@github.com:LaPetiteIndustry/search-bundle.git"
         }
     ],
     "require" : {
@@ -23,8 +23,8 @@
     },
     "autoload" : {
         "psr-0" : {
-            "Lpi\\Bundle\\LuceneBundle" : ""
+            "Lpi\\Bundle\\SearchBundle" : ""
         }
     },
-    "target-dir" : "Lpi/Bundle/LuceneBundle"
+    "target-dir" : "Lpi/Bundle/SearchBundle"
 }

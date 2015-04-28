@@ -6,7 +6,7 @@
  * Time: 11:49
  */
 
-namespace Lpi\Bundle\LuceneBundle\Test\Command;
+namespace Lpi\Bundle\SearchBundle\Test\Command;
 
 
 class IndexationCommandTest extends BaseCommandTest{

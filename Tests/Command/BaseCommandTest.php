@@ -6,7 +6,7 @@
  * Time: 11:46
  */
 
-namespace Lpi\Bundle\LuceneBundle\Test\Command;
+namespace Lpi\Bundle\SearchBundle\Test\Command;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

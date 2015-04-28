@@ -17,6 +17,7 @@
         }
     ],
     "require" : {
+        "php": ">=5.3.3",
         "egeloen/lucene-search-bundle": "~1.0",
         "zendframework/zendsearch": "dev-master"
     },
@@ -25,10 +26,5 @@
             "Lpi\\Bundle\\LuceneBundle" : ""
         }
     },
-    "target-dir" : "Lpi/Bundle/LuceneBundle",
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "master"
-        }
-    }
+    "target-dir" : "Lpi/Bundle/LuceneBundle"
 }

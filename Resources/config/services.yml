@@ -1,4 +1,10 @@
 services:
-#    lpi_lucene.example:
-#        class: Lpi\Bundle\LuceneBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    lpi_lucene.search:
+        class: Lpi\Bundle\LuceneBundle\Service\SearchService
+        arguments: [@ivory_lucene_search]
+    lpi_lucene.index_command:
+        class: Lpi\Bundle\LuceneBundle\Command\IndexationCommand
+        arguments:
+            - "sample-sitemap.xml"
+        tags:
+            - { name: console.command }

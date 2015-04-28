@@ -18,7 +18,7 @@
     ],
     "require" : {
         "egeloen/lucene-search-bundle": "~1.0",
-        "zendframework/zendsearch": "dev-master",
+        "zendframework/zendsearch": "dev-master"
     },
     "autoload" : {
         "psr-0" : {

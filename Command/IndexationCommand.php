@@ -42,6 +42,7 @@ class IndexationCommand extends ContainerAwareCommand {
                     $loc = $entry->loc;
                     $result = $this->crawlRoute($loc);
                     if (isset($result['title']) && isset($result['content'])) {
+                        $output->writeln(sprintf('Find a resource : %s', $result['title']));
                         $docs = $this->luceneIndex->find($result['title']);
                         if ($docs) {
                             foreach ($docs as $tmpDoc) {
@@ -54,12 +55,14 @@ class IndexationCommand extends ContainerAwareCommand {
 
                         $doc = new Document();
                         $doc->addField(Field::text('title', $result['title']));
+                        $doc->addField(Field::text('url', $loc));
                         $doc->addField(Field::text('content', $result['content']));
 
                         $this->luceneIndex->addDocument($doc);
                         $this->luceneIndex->commit();
                     }
                 }
+                $output->writeln(sprintf('Indexation ended, will now optimize indexes'));
                 $this->luceneIndex->optimize();
 
 
@@ -71,6 +74,7 @@ class IndexationCommand extends ContainerAwareCommand {
 
             exit;
         }
+        $output->writeln(sprintf('<info>Indexation ended with no error.</info>'));
 
     }
 

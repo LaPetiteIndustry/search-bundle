@@ -9,28 +9,21 @@
 namespace Lpi\Bundle\LuceneBundle\Test\Service;
 
 
-use Symfony\Bundle\SecurityBundle\Tests\Functional\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class SearchServiceTest extends WebTestCase {
-    protected $client;
-    public function setUp() {
-        $this->client = self::createClient();
-        copy(
-            __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'docs'.DIRECTORY_SEPARATOR.'sample-sitemap.xml',
-            $this->client->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.'sample-sitemap.xml'
-        );
-    }
 
     /**
      * @group search
      */
     public function testSearch() {
+        $client = self::createClient();
 
-    }
+        $documents = $client->getContainer()->get('lpi_lucene.search')->search('Une vision pointue et composite');
+        $this->assertGreaterThanOrEqual(1, count($documents));
 
-    public function tearDown() {
-        $this->client = self::createClient();
-        unlink($this->client->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.'sample-sitemap.xml');
     }
 }
  

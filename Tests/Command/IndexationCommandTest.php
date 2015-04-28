@@ -24,7 +24,7 @@ class IndexationCommandTest extends BaseCommandTest{
      */
     public function testIndexation() {
         $client = self::createClient();
-        $output = $this->runCommand($client, "lpi:lucene:index --path=sample-sitemap.xml");
+        $output = $this->runCommand($client, "lpi:lucene:index --path=sample-sitemap.xml --selector=section#content");
 
         $this->assertContains('Indexation ended, will now optimize indexes', $output);
         $this->assertContains('Indexation ended with no error.', $output);

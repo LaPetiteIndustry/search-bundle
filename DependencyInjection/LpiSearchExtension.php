@@ -24,5 +24,9 @@ class LpiSearchExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        if (isset($config['mappings'])) {
+            $container->setParameter('lpi_search_mappings', $config['mappings']);
+        }
     }
 }

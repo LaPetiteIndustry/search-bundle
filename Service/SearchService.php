@@ -8,7 +8,7 @@
 
 namespace Lpi\Bundle\SearchBundle\Service;
 
-use Ivory\SearchBundle\Model\LuceneManager;
+use Ivory\LuceneSearchBundle\Model\LuceneManager;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class SearchService {

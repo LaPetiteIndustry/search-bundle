@@ -8,7 +8,7 @@
 </pre>
 
 ## Configuration
-2. in app/config/config.yml
+1. in app/config/config.yml
 <pre>
     ivory_lucene_search:
 
@@ -45,4 +45,14 @@
             # Query parser encoding (Optional)
             # See http://framework.zend.com/manual/en/zend.search.lucene.searching.html#zend.search.lucene.searching.query_building.parsing
             query_parser_encoding: "UTF-8" # (default: "")
+</pre>
+
+## Usage
+1. For each entities you want to be indexed, you will have to add the "Lpi\Bundle\SearchBundle\Model\IndexableInterface" 
+2. in app/consfig/config.yml
+
+<pre>
+    lpi_search:
+        mappings: 
+            - { value: LpiEventBundle:Event , path: programmation_detail} #name of the entity you want to be indexed
 </pre>

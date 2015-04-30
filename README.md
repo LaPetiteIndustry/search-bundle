@@ -88,15 +88,15 @@ public function searchAction(Request $request) {
 
 and the render in your view for example:
 
-{% if results is defined and results|length > 0 %}
-    {% for result in results %}
-        <div class="col-xs-12">
-            <a href="{{ result.url }}" title="{{ result.title }}">
-                {{ result.title }}
-            </a>
-        </div>
-    {% endfor %}
-{% else %}
-    <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
-{% endif %}
+    {% if results is defined and results|length > 0 %}
+        {% for result in results %}
+            <div class="col-xs-12">
+                <a href="{{ result.url }}" title="{{ result.title }}">
+                    {{ result.title }}
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
+    {% endif %}
 

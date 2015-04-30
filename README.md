@@ -1,5 +1,6 @@
 # search-bundle
-
+The search bundle is a bundle that offer to you a light search engine.
+It works on lucene search library and inclue zend components.
 ## Installation
 1. in AppKernel
 <pre>
@@ -46,13 +47,56 @@
             # See http://framework.zend.com/manual/en/zend.search.lucene.searching.html#zend.search.lucene.searching.query_building.parsing
             query_parser_encoding: "UTF-8" # (default: "")
 </pre>
-
-## Usage
-1. For each entities you want to be indexed, you will have to add the "Lpi\Bundle\SearchBundle\Model\IndexableInterface" 
-2. in app/consfig/config.yml
+2. For each entities you want to be indexed, you will have to add the "Lpi\Bundle\SearchBundle\Model\IndexableInterface" 
+    an entity need to have these 4 methods:
+    * getId()
+    * getTitle()
+    * getSlug()
+    * getDescription()
+3. in app/consfig/config.yml
 
 <pre>
     lpi_search:
         mappings: 
             - { value: LpiEventBundle:Event , path: programmation_detail} #name of the entity you want to be indexed
+</pre>
+
+## Usage
+Now you have all indexes registered and you want to uses them, really easy!
+
+in a controller for example :
+
+<pre>
+    /**
+     * @param Request $request
+     * @return array
+     * @Route("/search", name="path_search")
+     * @Template()
+     * @Method({"GET", "POST"})
+     */
+    public function searchAction(Request $request) {
+        $results = null;
+        if ($request->request->has('term') and '' !== $request->request->get('term')) {
+            $results = $this->get('lpi_lucene.search')->search($request->request->get('term'));
+        }
+
+        return array(
+            'results' => $results
+        );
+    }
+</pre>
+
+and the render in your view for example:
+<pre>
+    {% if results is defined and results|length > 0 %}
+        {% for result in results %}
+            <div class="col-xs-12">
+                <a href="{{ result.url }}" title="{{ result.title }}">
+                    {{ result.title }}
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
+    {% endif %}
 </pre>

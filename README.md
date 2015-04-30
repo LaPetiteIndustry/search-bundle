@@ -87,7 +87,7 @@ in a controller for example :
 </pre>
 
 and the render in your view for example:
-<pre>
+
     {% if results is defined and results|length > 0 %}
         {% for result in results %}
             <div class="col-xs-12">
@@ -99,4 +99,4 @@ and the render in your view for example:
     {% else %}
         <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
     {% endif %}
-</pre>
+

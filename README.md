@@ -58,7 +58,7 @@ It works on lucene search library and inclue zend components.
 <pre>
     lpi_search:
         mappings: 
-            - { value: LpiEventBundle:Event , path: programmation_detail} #name of the entity you want to be indexed
+            - { value: ApplicationLpiEventBundle:Event , path: programmation_detail} #name of the entity you want to be indexed
 </pre>
 
 ## Usage

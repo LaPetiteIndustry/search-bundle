@@ -38,6 +38,10 @@ class IndexationCommand extends ContainerAwareCommand {
             ->setDescription("Lucene indexation from the sitemap file");
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $sitemapPath = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.$input->getOption('path');
         $this->luceneIndex = $this->getContainer()->get('ivory_lucene_search')->getIndex('search_index');
@@ -73,6 +77,9 @@ class IndexationCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * @param string $title
+     */
     private function findOrDeleteIndex($title) {
         $docs = $this->luceneIndex->find($title);
         if ($docs) {
@@ -84,6 +91,12 @@ class IndexationCommand extends ContainerAwareCommand {
         }
     }
 
+    /**
+     * @param string          $title
+     * @param string          $content
+     * @param string          $url
+     * @param OutputInterface $output
+     */
     private function createIndex($title, $content, $url, OutputInterface $output) {
         $output->writeln('Create index for : '.$title);
         $doc = new Document();
@@ -117,6 +130,9 @@ class IndexationCommand extends ContainerAwareCommand {
         return $crawlResult;
     }
 
+    /**
+     * @param OutputInterface $output
+     */
     private function indexEntities(OutputInterface $output) {
         $_em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
         $mappings = $this->getContainer()->getParameter('lpi_search_mappings');
@@ -130,12 +146,33 @@ class IndexationCommand extends ContainerAwareCommand {
                         $this->findOrDeleteIndex($entity->getTitle());
                         $title = $entity->getTitle();
                         $content = $entity->getDescription();
-                        $url = $router->generate($mapping['path'], ['id' => $entity->getId(), 'slug' => $entity->getSlug()]);
+                        $routeParameters = $this->buildRouteParameters($entity, $mapping['path']);
+                        $url = $router->generate($mapping['path'], $routeParameters);
 
                         $this->createIndex($title, $content, $url, $output);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * @param IndexableInterface $object
+     * @param string             $route
+     * @return array
+     */
+    private function buildRouteParameters(IndexableInterface $object, $routeId) {
+        $parameters = array();
+        $route = $this->getContainer()->get('router')->getRouteCollection()->get($routeId);
+        $compiledRoute = $route->compile();
+        $arguments = $compiledRoute->getVariables();
+        if (count($arguments) > 0) {
+            foreach ($arguments as $argument) {
+                $getter = 'get'.ucfirst($argument);
+                $parameters[$argument] = $object->$getter();
+            }
+        }
+
+        return $parameters;
     }
 } 

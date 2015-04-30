@@ -53,7 +53,7 @@ It works on lucene search library and include zend components.
     * getTitle()
     * getSlug()
     * getDescription()
-3. in app/consfig/config.yml
+3. in app/config/config.yml
 
 <pre>
     lpi_search:

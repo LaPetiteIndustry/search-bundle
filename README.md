@@ -1,6 +1,6 @@
 # search-bundle
 The search bundle is a bundle that offer to you a light search engine.
-It works on lucene search library and inclue zend components.
+It works on lucene search library and include zend components.
 ## Installation
 1. in AppKernel
 <pre>

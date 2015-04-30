@@ -10,14 +10,13 @@ namespace Lpi\Bundle\SearchBundle\Command;
 
 use Lpi\Bundle\SearchBundle\Model\IndexableInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Bundle\SecurityBundle\Tests\Functional\WebTestCase;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\Request;
 use ZendSearch\Lucene\Document;
 use ZendSearch\Lucene\Document\Field;
 
@@ -43,6 +42,14 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param OutputInterface $output
      */
     public function execute(InputInterface $input, OutputInterface $output) {
+        $env = $this->getContainer()->get('kernel')->getEnvironment();
+
+//        $clearCommand = $this->getApplication()->find('cache:clear');
+//        $arguments = array(
+//            '--env' => $env
+//        );
+//        $clearInput = new ArrayInput($arguments);
+//        $clearCommand->execute($clearInput, $output);
         $sitemapPath = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.$input->getOption('path');
         $this->luceneIndex = $this->getContainer()->get('ivory_lucene_search')->getIndex('search_index');
 
@@ -81,10 +88,10 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param string $title
      */
     private function findOrDeleteIndex($title) {
-        $docs = $this->luceneIndex->find($title);
+        $docs = $this->luceneIndex->find(str_replace(' ', '-', $title));
         if ($docs) {
             foreach ($docs as $tmpDoc) {
-                if ($tmpDoc->title === $title) {
+                if ($tmpDoc->slug === str_replace(' ', '-', $title)) {
                     $this->luceneIndex->delete($tmpDoc->id);
                 }
             }
@@ -98,8 +105,9 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param OutputInterface $output
      */
     private function createIndex($title, $content, $url, OutputInterface $output) {
-        $output->writeln('Create index for : '.$title);
+        $output->writeln('Create index for : '.str_replace(' ', '-', $title));
         $doc = new Document();
+        $doc->addField(Field::text('slug', str_replace(' ', '-', $title)));
         $doc->addField(Field::text('title', $title));
         $doc->addField(Field::text('url', $url));
         $doc->addField(Field::text('content', $content));

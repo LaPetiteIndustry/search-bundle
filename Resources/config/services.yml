@@ -1,10 +1,24 @@
 services:
+    lpi_lucene.mapper:
+        class: Lpi\Bundle\SearchBundle\Service\Mapper
+        arguments: [%lpi_search_mappings%]
     lpi_lucene.search:
         class: Lpi\Bundle\SearchBundle\Service\SearchService
-        arguments: [@ivory_lucene_search]
+        arguments:
+            - @ivory_lucene_search
+            - @router
+            - @lpi_lucene.mapper
     lpi_lucene.index_command:
         class: Lpi\Bundle\SearchBundle\Command\IndexationCommand
         arguments:
             - "sample-sitemap.xml"
         tags:
             - { name: console.command }
+    my.listener:
+        class: Lpi\Bundle\SearchBundle\Listener\IndexableListener
+        arguments:
+            - @lpi_lucene.search
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }

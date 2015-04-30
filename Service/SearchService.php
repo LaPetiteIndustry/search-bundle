@@ -9,13 +9,26 @@
 namespace Lpi\Bundle\SearchBundle\Service;
 
 use Ivory\LuceneSearchBundle\Model\LuceneManager;
+use Lpi\Bundle\SearchBundle\Model\IndexableInterface;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use ZendSearch\Lucene\Document;
+use ZendSearch\Lucene\Document\Field;
 
 class SearchService {
     protected $index;
+    protected $router;
+    protected $mapper;
 
-    public function __construct(LuceneManager $lucene) {
+    /**
+     * @param LuceneManager $lucene
+     * @param Router $router
+     * @param Mapper $mapper
+     */
+    public function __construct(LuceneManager $lucene, Router $router, Mapper $mapper) {
         $this->index = $lucene->getIndex('search_index');
+        $this->router = $router;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -33,7 +46,7 @@ class SearchService {
         if (null === $query || empty($query)) {
             return false;
         }
-        $documents = $this->index->find($query);
+        $documents = $this->index->find('slug:'.str_replace(' ', '-', htmlentities($query)).' OR content: '.htmlentities($query));
         if ($documents) {
             foreach ($documents as $document) {
                 if ($document->title && $document->url) {
@@ -47,5 +60,82 @@ class SearchService {
 
         return $result;
     }
+
+    /**
+     * @param IndexableInterface $object
+     */
+    public function createIndex(IndexableInterface $object) {
+        $this->findOrDeleteIndex($object->getTitle());
+        $mapping = $this->mapper->getMapper(get_class($object));
+        $title = $object->getTitle();
+        $content = $object->getDescription();
+        $routeParameters = $this->buildRouteParameters($object, $mapping['path']);
+        $url = $this->router->generate($mapping['path'], $routeParameters);
+
+        $this->createDocument($title, $content, $url);
+    }
+
+    /**
+     * @param string $title
+     */
+    public function removeIndex($title) {
+        $docs = $this->index->find(htmlentities(str_replace(' ', '-', $title)));
+        if ($docs) {
+            foreach ($docs as $tmpDoc) {
+                if ($tmpDoc->title === str_replace(' ', '-', $title)) {
+                    $this->index->delete($tmpDoc->id);
+                }
+            }
+        }
+    }
+
+    public function optimize() {
+        $this->index->optimize();
+    }
+    /**
+     * @param string $title
+     */
+    private function findOrDeleteIndex($title) {
+        $this->removeIndex($title);
+    }
+
+    /**
+     * @param string          $title
+     * @param string          $content
+     * @param string          $url
+     * @param OutputInterface $output
+     */
+    private function createDocument($title, $content, $url) {
+        $doc = new Document();
+        $doc->addField(Field::text('slug', str_replace(' ', '-', $title)));
+        $doc->addField(Field::text('title', $title));
+        $doc->addField(Field::text('url', $url));
+        $doc->addField(Field::text('content', $content));
+
+        $this->index->addDocument($doc);
+        $this->index->commit();
+    }
+
+
+    /**
+     * @param IndexableInterface $object
+     * @param string             $route
+     * @return array
+     */
+    private function buildRouteParameters(IndexableInterface $object, $routeId) {
+        $parameters = array();
+        $route = $this->router->getRouteCollection()->get($routeId);
+        $compiledRoute = $route->compile();
+        $arguments = $compiledRoute->getVariables();
+        if (count($arguments) > 0) {
+            foreach ($arguments as $argument) {
+                $getter = 'get'.ucfirst($argument);
+                $parameters[$argument] = $object->$getter();
+            }
+        }
+
+        return $parameters;
+    }
+
 
 } 

@@ -1,6 +1,6 @@
 # search-bundle
 The search bundle is a bundle that offer to you a light search engine.
-It works on lucene search library and inclue zend components.
+It works on lucene search library and include zend components.
 ## Installation
 1. in AppKernel
 <pre>
@@ -53,7 +53,7 @@ It works on lucene search library and inclue zend components.
     * getTitle()
     * getSlug()
     * getDescription()
-3. in app/consfig/config.yml
+3. in app/config/config.yml
 
 <pre>
     lpi_search:
@@ -67,27 +67,27 @@ Now you have all indexes registered and you want to uses them, really easy!
 in a controller for example :
 
 <pre>
-    /**
-     * @param Request $request
-     * @return array
-     * @Route("/search", name="path_search")
-     * @Template()
-     * @Method({"GET", "POST"})
-     */
-    public function searchAction(Request $request) {
-        $results = null;
-        if ($request->request->has('term') and '' !== $request->request->get('term')) {
-            $results = $this->get('lpi_lucene.search')->search($request->request->get('term'));
-        }
-
-        return array(
-            'results' => $results
-        );
+/**
+ * @param Request $request
+ * @return array
+ * @Route("/search", name="path_search")
+ * @Template()
+ * @Method({"GET", "POST"})
+ */
+public function searchAction(Request $request) {
+    $results = null;
+    if ($request->request->has('term') and '' !== $request->request->get('term')) {
+        $results = $this->get('lpi_lucene.search')->search($request->request->get('term'));
     }
+
+    return array(
+        'results' => $results
+    );
+}
 </pre>
 
 and the render in your view for example:
-<pre>
+
     {% if results is defined and results|length > 0 %}
         {% for result in results %}
             <div class="col-xs-12">
@@ -99,4 +99,4 @@ and the render in your view for example:
     {% else %}
         <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
     {% endif %}
-</pre>
+

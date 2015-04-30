@@ -67,36 +67,36 @@ Now you have all indexes registered and you want to uses them, really easy!
 in a controller for example :
 
 <pre>
-    /**
-     * @param Request $request
-     * @return array
-     * @Route("/search", name="path_search")
-     * @Template()
-     * @Method({"GET", "POST"})
-     */
-    public function searchAction(Request $request) {
-        $results = null;
-        if ($request->request->has('term') and '' !== $request->request->get('term')) {
-            $results = $this->get('lpi_lucene.search')->search($request->request->get('term'));
-        }
-
-        return array(
-            'results' => $results
-        );
+/**
+ * @param Request $request
+ * @return array
+ * @Route("/search", name="path_search")
+ * @Template()
+ * @Method({"GET", "POST"})
+ */
+public function searchAction(Request $request) {
+    $results = null;
+    if ($request->request->has('term') and '' !== $request->request->get('term')) {
+        $results = $this->get('lpi_lucene.search')->search($request->request->get('term'));
     }
+
+    return array(
+        'results' => $results
+    );
+}
 </pre>
 
 and the render in your view for example:
 
-    {% if results is defined and results|length > 0 %}
-        {% for result in results %}
-            <div class="col-xs-12">
-                <a href="{{ result.url }}" title="{{ result.title }}">
-                    {{ result.title }}
-                </a>
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
-    {% endif %}
+{% if results is defined and results|length > 0 %}
+    {% for result in results %}
+        <div class="col-xs-12">
+            <a href="{{ result.url }}" title="{{ result.title }}">
+                {{ result.title }}
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning">{{ 'search.result.nothing'|trans({}, 'messages') }}</div>
+{% endif %}
 

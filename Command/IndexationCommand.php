@@ -42,15 +42,10 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param OutputInterface $output
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $env = $this->getContainer()->get('kernel')->getEnvironment();
-
-//        $clearCommand = $this->getApplication()->find('cache:clear');
-//        $arguments = array(
-//            '--env' => $env
-//        );
-//        $clearInput = new ArrayInput($arguments);
-//        $clearCommand->execute($clearInput, $output);
         $sitemapPath = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.$input->getOption('path');
+        $output->writeln(sprintf('<info>Clearing the search_index index</info>'));
+        $this->getContainer()->get('ivory_lucene_search')->eraseIndex('search_index');
+
         $this->luceneIndex = $this->getContainer()->get('ivory_lucene_search')->getIndex('search_index');
 
         try {

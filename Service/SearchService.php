@@ -19,6 +19,7 @@ class SearchService {
     protected $index;
     protected $router;
     protected $mapper;
+    protected $manager;
 
     /**
      * @param LuceneManager $lucene
@@ -26,6 +27,7 @@ class SearchService {
      * @param Mapper $mapper
      */
     public function __construct(LuceneManager $lucene, Router $router, Mapper $mapper) {
+        $this->mapper = $lucene;
         $this->index = $lucene->getIndex('search_index');
         $this->router = $router;
         $this->mapper = $mapper;
@@ -86,6 +88,12 @@ class SearchService {
                     $this->index->delete($tmpDoc->id);
                 }
             }
+        }
+    }
+
+    public function clearIndex() {
+        if ($this->manager instanceof LuceneManager) {
+            $this->manager->eraseIndex('search_index');
         }
     }
 

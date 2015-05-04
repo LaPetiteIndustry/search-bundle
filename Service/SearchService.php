@@ -19,7 +19,6 @@ class SearchService {
     protected $index;
     protected $router;
     protected $mapper;
-    protected $manager;
 
     /**
      * @param LuceneManager $lucene
@@ -27,7 +26,6 @@ class SearchService {
      * @param Mapper $mapper
      */
     public function __construct(LuceneManager $lucene, Router $router, Mapper $mapper) {
-        $this->mapper = $lucene;
         $this->index = $lucene->getIndex('search_index');
         $this->router = $router;
         $this->mapper = $mapper;
@@ -67,33 +65,29 @@ class SearchService {
      * @param IndexableInterface $object
      */
     public function createIndex(IndexableInterface $object) {
-        $this->findOrDeleteIndex($object->getTitle());
+        $classname = strtolower(substr(get_class($object), strrpos('\\', get_class($object))+1));
         $mapping = $this->mapper->getMapper(get_class($object));
+        $uuid = $classname.'-'.$object->getId();
+        $this->findOrDeleteIndex($uuid);
         $title = $object->getTitle();
         $content = $object->getDescription();
         $routeParameters = $this->buildRouteParameters($object, $mapping['path']);
         $url = $this->router->generate($mapping['path'], $routeParameters);
 
-        $this->createDocument($title, $content, $url);
+        $this->createDocument($uuid, $title, $content, $url);
     }
 
     /**
      * @param string $title
      */
-    public function removeIndex($title) {
-        $docs = $this->index->find(htmlentities(str_replace(' ', '-', $title)));
+    public function removeIndex($uuid) {
+        $docs = $this->index->find("uuid:".$uuid);
         if ($docs) {
             foreach ($docs as $tmpDoc) {
-                if ($tmpDoc->title === str_replace(' ', '-', $title)) {
+                if ($tmpDoc->uuid === $uuid) {
                     $this->index->delete($tmpDoc->id);
                 }
             }
-        }
-    }
-
-    public function clearIndex() {
-        if ($this->manager instanceof LuceneManager) {
-            $this->manager->eraseIndex('search_index');
         }
     }
 
@@ -103,18 +97,20 @@ class SearchService {
     /**
      * @param string $title
      */
-    private function findOrDeleteIndex($title) {
-        $this->removeIndex($title);
+    private function findOrDeleteIndex($uuid) {
+        $this->removeIndex($uuid);
     }
 
     /**
+     * @param string          $uuid
      * @param string          $title
      * @param string          $content
      * @param string          $url
      * @param OutputInterface $output
      */
-    private function createDocument($title, $content, $url) {
+    private function createDocument($uuid, $title, $content, $url) {
         $doc = new Document();
+        $doc->addField(Field::text('uuid', $uuid));
         $doc->addField(Field::text('slug', str_replace(' ', '-', $title)));
         $doc->addField(Field::text('title', $title));
         $doc->addField(Field::text('url', $url));
@@ -144,6 +140,4 @@ class SearchService {
 
         return $parameters;
     }
-
-
-} 
+}

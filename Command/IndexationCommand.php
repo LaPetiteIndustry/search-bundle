@@ -42,10 +42,11 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param OutputInterface $output
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $sitemapPath = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.$input->getOption('path');
+        $env = $this->getContainer()->get('kernel')->getEnvironment();
         $output->writeln(sprintf('<info>Clearing the search_index index</info>'));
         $this->getContainer()->get('ivory_lucene_search')->eraseIndex('search_index');
-
+        
+        $sitemapPath = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'web'.DIRECTORY_SEPARATOR.$input->getOption('path');
         $this->luceneIndex = $this->getContainer()->get('ivory_lucene_search')->getIndex('search_index');
 
         try {
@@ -82,11 +83,11 @@ class IndexationCommand extends ContainerAwareCommand {
     /**
      * @param string $title
      */
-    private function findOrDeleteIndex($title) {
-        $docs = $this->luceneIndex->find(str_replace(' ', '-', $title));
+    private function findOrDeleteIndex($uuid) {
+        $docs = $this->luceneIndex->find($uuid);
         if ($docs) {
             foreach ($docs as $tmpDoc) {
-                if ($tmpDoc->slug === str_replace(' ', '-', $title)) {
+                if ($tmpDoc->slug === $uuid) {
                     $this->luceneIndex->delete($tmpDoc->id);
                 }
             }
@@ -99,9 +100,13 @@ class IndexationCommand extends ContainerAwareCommand {
      * @param string          $url
      * @param OutputInterface $output
      */
-    private function createIndex($title, $content, $url, OutputInterface $output) {
+    private function createIndex($title, $content, $url, OutputInterface $output, $uuid= null) {
+        if (!$uuid) {
+            $uuid = $url;
+        }
         $output->writeln('Create index for : '.str_replace(' ', '-', $title));
         $doc = new Document();
+        $doc->addField(Field::text('uuid', $uuid));
         $doc->addField(Field::text('slug', str_replace(' ', '-', $title)));
         $doc->addField(Field::text('title', $title));
         $doc->addField(Field::text('url', $url));
@@ -149,10 +154,11 @@ class IndexationCommand extends ContainerAwareCommand {
                         $this->findOrDeleteIndex($entity->getTitle());
                         $title = $entity->getTitle();
                         $content = $entity->getDescription();
+                        $uuid = strtolower(substr(get_class($entity), strrpos('\\', get_class($entity))+1)) . '-'.$entity->getId();
                         $routeParameters = $this->buildRouteParameters($entity, $mapping['path']);
                         $url = $router->generate($mapping['path'], $routeParameters);
 
-                        $this->createIndex($title, $content, $url, $output);
+                        $this->createIndex($title, $content, $url, $output, $uuid);
                     }
                 }
             }

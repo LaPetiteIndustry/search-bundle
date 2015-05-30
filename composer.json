@@ -1,30 +1,33 @@
 {
-    "name" : "lpi/search-bundle",
-    "description" : "A bundle that use the lucene search engine",
-    "type" : "symfony-bundle",
-    "authors" : [{
-        "name" : "LPI - Jeremy",
-        "email" : "jeremy@lapetiteindustry.com"
-    }],
-    "keywords" : ["lpi zend lucene search"],
-    "license" : [
-        "Apache"
-    ],
-    "repositories" : [
-        {
-            "type": "git",
-            "url":  "git@github.com:LaPetiteIndustry/search-bundle.git"
-        }
-    ],
-    "require" : {
-        "php": ">=5.3.3",
-        "egeloen/lucene-search-bundle": "~1.0",
-        "zendframework/zendsearch": "dev-master"
+  "name": "lpi-lab/search-bundle",
+  "description": "A bundle that use the lucene search engine",
+  "type": "symfony-bundle",
+  "authors": [
+    {
+      "name": "La Petite Industry",
+      "email": "contact@lapetiteindustry.com",
+      "homepage": "http://www.lapetiteindustry.com"
     },
-    "autoload" : {
-        "psr-0" : {
-            "Lpi\\Bundle\\SearchBundle" : ""
-        }
-    },
-    "target-dir" : "Lpi/Bundle/SearchBundle"
+    {
+      "name": "LPI - Jeremy",
+      "email": "jeremy@lapetiteindustry.com"
+    }
+  ],
+  "keywords": ["lpi zend lucene search"],
+  "license": [
+    "Apache"
+  ],
+  "require": {
+    "php": ">=5.3.3",
+    "egeloen/lucene-search-bundle": "~1.0",
+    "zendframework/zendsearch": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {"Lpi\\Bundle\\SearchBundle\\": ""}
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.*-dev"
+    }
+  }
 }
